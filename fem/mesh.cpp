@@ -12,7 +12,9 @@ void mesh::random(float rad, int triangle)
     int innerpoint = (triangle+2+k)/2;
     auto vec = GMlib::Vector<float,2>(rad,0);
     GMlib::Angle a=M_2PI/k;
-    GMlib::SqMatrix<float,2> matrix (a, GMlib::Vector<float,2>(1.0f,0.0f),GMlib::Vector<float,2>(0.0f,1.0f));
+    GMlib::SqMatrix<float,2> matrix (a,
+                                     GMlib::Vector<float,2>(1.0f,0.0f),
+                                     GMlib::Vector<float,2>(0.0f,1.0f));
 
     for (int i=0;i<k;i++)
     {   vec = matrix*vec;
@@ -26,7 +28,8 @@ void mesh::random(float rad, int triangle)
 
     for (int j=0;j<innerpoint;j++)
     {
-        auto point = GMlib::TSVertex<float>(gen_float(-new_rad,new_rad),gen_float(-new_rad,new_rad));
+        auto point = GMlib::TSVertex<float>(gen_float(-new_rad,new_rad),
+                                            gen_float(-new_rad,new_rad));
         if (checkP(&point, s, new_rad))
             this->insertAlways(point);
         else
@@ -66,18 +69,18 @@ float mesh::gen_float(float a, float b)
 
 void mesh::regular(int circle, double firstRad, int innerNodes)
 {
-    this->insertAlways(GMlib::TSVertex<float>(GMlib::Point<float,2>(0,0)));  // 插入中心点
+    this->insertAlways(GMlib::TSVertex<float>(GMlib::Point<float,2>(0,0)));
 
     for (int j=1;j<=circle;j++)
     {
-        auto vec = GMlib::Vector<float,2>(firstRad*float(j),0);  // 定义最内圈的半径向量（半径参数是圈数乘以第一圈半径的大小，0度）
+        auto vec = GMlib::Vector<float,2>(firstRad*float(j),0);
 
-        GMlib::Angle a(M_2PI/(innerNodes*j));   //定义一个角度li
-        GMlib::SqMatrix<float,2> matrix (a,GMlib::Vector<float,2>(1,0),GMlib::Vector<float,2>(0,1));  //定义一个矩阵，三个参数分别是角度，x轴向量，y轴向量
+        GMlib::Angle a(M_2PI/(innerNodes*j));
+        GMlib::SqMatrix<float,2> matrix (a,GMlib::Vector<float,2>(1,0),GMlib::Vector<float,2>(0,1));
 
         for (int i=1;i<=innerNodes*j;i++)
         {
-            vec = matrix*vec;    //角度依次旋转
+            vec = matrix*vec;
             this->insertAlways(GMlib::TSVertex<float>(static_cast<GMlib::Point<float,2>>(vec)));
             //std::cout<<this->getVertex(i)<<std::endl;
         }
@@ -88,15 +91,15 @@ void mesh::regular(int circle, double firstRad, int innerNodes)
 
 void mesh::findElement()
 {
-    for (int i=0; i<this->size(); i++) //指的mesh里面的所有成员的大小
+    for (int i=0; i<this->size(); i++)
     {
-        if (!(*this)[i].boundary())    //不是所有边界上的成员都放在一个容器里
-            //                nodes+=GMlib::TSVertex<float>((*this)[i]);
+        if (!(*this)[i].boundary())
+
             nodes+=&(*this)[i];
 
     }
 
-    A.setDim(nodes.size(),nodes.size());  // 设置矩阵A的大小
+    A.setDim(nodes.size(),nodes.size());
 
     b.setDim(nodes.size());
 
@@ -152,7 +155,7 @@ void mesh::findElement()
         auto triangles = nodes[i]->getTriangles();
         for (int k=0; k<triangles.size();k++)
         {
-            auto DiaVector = findVectord(nodes[i], triangles[k]);  //对角向量
+            auto DiaVector = findVectord(nodes[i], triangles[k]);
             A[i][i]+=(DiaVector[2]*DiaVector[2])/(2*std::abs(DiaVector[0]^DiaVector[1]));
         }
 
@@ -164,14 +167,14 @@ void mesh::findElement()
         for (int k=0; k<triangles.size();k++)
         {
             auto bVector = findVectord(nodes[i], triangles[k]);
-          //  std::cout << "bvector: " << bVector << std::endl;
+            //  std::cout << "bvector: " << bVector << std::endl;
             b[i]+= (std::abs(bVector[0]^bVector[1]))/6;
         }
 
     }
 
     //print matrix on screen
-    std::cout<<"New matrix"<<std::endl;
+   // std::cout<<"New matrix"<<std::endl;
     for (int i =0; i<nodes.size();i++)
     {
         for(int j=0; j<nodes.size();j++)
@@ -182,7 +185,7 @@ void mesh::findElement()
     }
 
     //print b vector on screen
-    std::cout<<"b"<<std::endl;
+    //std::cout<<"b"<<std::endl;
     for (int i=0; i<nodes.size();i++)
     {
 
@@ -195,20 +198,20 @@ void mesh::findElement()
 
 }
 
-GMlib::Vector<GMlib::Vector<float,2>,3> mesh::findVector(GMlib::TSEdge<float>* commonEdge)   //找三个向量d，a1，a2
+GMlib::Vector<GMlib::Vector<float,2>,3> mesh::findVector(GMlib::TSEdge<float>* commonEdge)
 {
     GMlib::Vector<GMlib::Vector<float,2>,3> returnVec;
 
 
-    auto p0=commonEdge->getFirstVertex();      //定义p0是共同边的第一个顶点
-    auto p1=commonEdge->getLastVertex();       //定义p1是共同边的最后一个顶点
-    GMlib::TSVertex<float> *p2, *p3;           //点定义两个点，是GMlib::TSVertex<float>类型的
-    auto triangles=commonEdge->getTriangle();  //定义三角形，是共同边得到的三角形，有两个（库里面的程序）
+    auto p0=commonEdge->getFirstVertex();
+    auto p1=commonEdge->getLastVertex();
+    GMlib::TSVertex<float> *p2, *p3;
+    auto triangles=commonEdge->getTriangle();
 
-    auto pointstr1=triangles[0]->getVertices();   //定义一个点，是第一个三角形的顶点
-    auto pointstr2=triangles[1]->getVertices();   //定义一个点，是第二个三角的顶点
+    auto pointstr1=triangles[0]->getVertices();
+    auto pointstr2=triangles[1]->getVertices();
 
-    for(int i=0;i<3;i++)                          //比较三角形中的三个点
+    for(int i=0;i<3;i++)
     {
         if(pointstr1[i]!=p0 && pointstr1[i]!=p1)
         {
@@ -237,7 +240,8 @@ GMlib::Vector<GMlib::Vector<float,2>,3> mesh::findVector(GMlib::TSEdge<float>* c
 
 }
 
-GMlib::Vector<GMlib::Vector<float,2>,3> mesh::findVectord(GMlib::TSVertex<float> *point,GMlib::TSTriangle<float>* triangle )
+GMlib::Vector<GMlib::Vector<float,2>,3> mesh::findVectord(GMlib::TSVertex<float> *point,
+                                                          GMlib::TSTriangle<float>* triangle )
 {
     GMlib::Vector<GMlib::Vector<float,2>,3> returnDia;
     auto trianglepoints = triangle->getVertices();

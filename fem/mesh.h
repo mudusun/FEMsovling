@@ -4,6 +4,7 @@
 #include <trianglesystem/gmtrianglesystem>
 #include <core/gmarraylx>
 #include <math.h>
+
 #include "element.h"
 
 
@@ -24,9 +25,9 @@ public:
     void findElement();
     float gen_float(float a, float b);
     void regular(int circle, double firstRad,int firstNode);
-    //    GMlib::TSEdge<float>* isNeibourPoints(GMlib::TSVertex<float>* n0,GMlib::TSVertex<float>* n1);
     GMlib::Vector<GMlib::Vector<float,2>,3> findVector( GMlib::TSEdge<float>* commonEdge);
-    GMlib::Vector<GMlib::Vector<float,2>,3> findVectord(GMlib::TSVertex<float>* point,GMlib::TSTriangle<float>* triangle);
+    GMlib::Vector<GMlib::Vector<float,2>,3> findVectord(GMlib::TSVertex<float>* point,
+                                                        GMlib::TSTriangle<float>* triangle);
 
 private:
 

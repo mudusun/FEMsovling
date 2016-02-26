@@ -41,5 +41,5 @@ GMlib::TSVertex<float>* node;
 
 };
 
-#endif // ELEMENT_H
+#endif
 
